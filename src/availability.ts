@@ -40,6 +40,7 @@ export function checkAvailability(args: {
 }): CheckOutcome {
   const { start, end, now, blocked, bookings } = args;
   const reasons: string[] = [];
+  bookings.sort((a, b) => a.start - b.start);
 
   if (!(start >= 0 && end <= MINUTE_CAP)) {
     reasons.push('Times must stay within 00:00–24:00 (0–1440 minutes).');
