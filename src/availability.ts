@@ -63,7 +63,7 @@ export function checkAvailability(args: {
   }
 
   for (const b of bookings) {
-    const overlaps = start <= b.end && b.start <= end;
+    const overlaps = start < b.end && b.start < end;
     if (overlaps) {
       reasons.push(
         `Overlaps existing booking "${b.label}" (${toHHMM(b.start)}–${toHHMM(b.end)}).`
