@@ -1,6 +1,7 @@
 import { CalendarClock } from 'lucide-react';
 import type { Booking } from '@/domain/types';
-import { MAX_DURATION, MINUTE_CAP, toHHMM } from '@/domain/time';
+import { MINUTE_CAP, toHHMM } from '@/domain/time';
+import { RECAP_RULES } from '@/domain/rules';
 
 export default function BookingsPanel({ bookings }: { bookings: Booking[] }) {
   return (
@@ -31,10 +32,7 @@ export default function BookingsPanel({ bookings }: { bookings: Booking[] }) {
       <div className="mt-5 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
         <p className="font-medium text-slate-600 mb-1">Rules recap</p>
         <ul className="list-disc pl-4 space-y-1">
-          <li>00:00 ≤ start &lt; end ≤ 24:00; start &gt; current time.</li>
-          <li>Duration ≤ {MAX_DURATION} min ({MAX_DURATION} allowed).</li>
-          <li>Touching endpoints do not overlap.</li>
-          <li>Blocked room is always unavailable.</li>
+          {RECAP_RULES.map((rule) => <li key={rule}>{rule}</li>)}
         </ul>
       </div>
     </section>

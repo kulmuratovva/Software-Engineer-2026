@@ -5,6 +5,7 @@ import type { CheckOutcome, Equipment } from '@/domain/types';
 import { checkAvailability } from '@/domain/availability';
 import { filterRooms } from '@/domain/filtering';
 import { DEFAULTS, MAX_DURATION, durationMinutes, formatDuration, toMinutes } from '@/domain/time';
+import { DURATION_LIMIT_NOTE, INPUT_ERRORS } from '@/domain/rules';
 import TimeField from '@/components/TimeField';
 import RoomPicker from '@/components/RoomPicker';
 import ResultPanel from '@/components/ResultPanel';
@@ -39,9 +40,9 @@ export default function App() {
   const handleCheck = () => {
     if (!room) return;
     const errors = [
-      startMin === null && 'Start time is empty or invalid (use HH:MM).',
-      endMin === null && 'End time is empty or invalid (use HH:MM).',
-      nowMin === null && 'Current time is empty or invalid (use HH:MM).',
+      startMin === null && INPUT_ERRORS.start,
+      endMin === null && INPUT_ERRORS.end,
+      nowMin === null && INPUT_ERRORS.now,
     ].filter(Boolean) as string[];
     setSubmitted(true);
     setInputErrors(errors);
@@ -101,7 +102,7 @@ export default function App() {
               <span>
                 Duration: <span className="font-medium text-slate-800">{formatDuration(duration)}</span>
                 {duration !== null && duration > MAX_DURATION && (
-                  <span className="ml-2 text-rose-600 font-medium">(exceeds {MAX_DURATION} min limit)</span>
+                  <span className="ml-2 text-rose-600 font-medium">({DURATION_LIMIT_NOTE})</span>
                 )}
               </span>
             </div>
