@@ -36,6 +36,12 @@ export default function App() {
   const clearResult = () => { setSubmitted(false); setOutcome(null); setInputErrors([]); };
   // F5: any input or room change clears a stale result.
   useEffect(clearResult, [startTime, endTime, nowTime, selectedId, attendees, required]);
+  // R2: a room hidden by filters is deselected instead of being restored later.
+  useEffect(() => {
+    if (selectedId !== null && !visibleRooms.some((r) => r.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [selectedId, visibleRooms]);
 
   const handleCheck = () => {
     if (!room) return;
