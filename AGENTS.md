@@ -8,7 +8,7 @@ Purpose: a student checks whether a requested time slot is available.
 - Room filtering: src/domain/filtering.ts
 - UI: src/App.tsx, src/components/
 - Fixture data: src/data/rooms.ts
-- Tests: src/domain/availability.test.ts, src/domain/features.test.ts, src/App.test.tsx
+- Tests: src/domain/availability.test.ts, src/domain/features.test.ts, src/App.test.tsx, src/domain/rules.test.ts
 
 ## Acceptance criteria (must be preserved)
 - AC1: reject start >= end and past requests.
@@ -20,6 +20,8 @@ Purpose: a student checks whether a requested time slot is available.
 
 ## Constraints
 Preserve AC1-AC6; no backend, login or booking creation.
+Fictional room data only; no real rooms or real personal data.
+No secrets in source or committed files; no external deployments.
 No new features or dependencies. Keep the existing UI layout, wording and interactions.
 
 ## Engineering rules
@@ -33,7 +35,8 @@ Test command: npm test (runs `vitest run`)
 Dev/preview: npm run dev
 
 ## Verification
-Baseline: 3 test files, 24 tests passing.
+Baseline: 4 test files, 37 tests passing.
 Run existing tests and add focused regression tests.
+Run npm test (plus npm run typecheck and npm run lint) and report results before proposing acceptance.
 Never weaken or delete existing assertions.
 Report changed files, rationale and test evidence.
