@@ -1,0 +1,4 @@
+﻿src/components/BookingsPanel.tsx:20:              <span className="text-xs text-slate-500">{b.end - b.start} min</span>
+src/components/BookingsPanel.tsx:26:                width: `${((b.end - b.start) / MINUTE_CAP) * 100}%`,
+src/domain/availability.ts:23:  const duration = end - start;
+src/domain/time.ts:23:  return start !== null && end !== null && end > start ? end - start : null;

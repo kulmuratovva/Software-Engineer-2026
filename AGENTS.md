@@ -1,42 +1,76 @@
-## Project
-Smart Campus room availability checker; one room checked at a time, fictional data.
-Purpose: a student checks whether a requested time slot is available.
+# AGENTS.md
 
-## Structure
-- Booking-rule function: src/domain/availability.ts
-- Time helpers and limits (120 / 1440 min): src/domain/time.ts
-- Room filtering: src/domain/filtering.ts
-- UI: src/App.tsx, src/components/
-- Fixture data: src/data/rooms.ts
-- Tests: src/domain/availability.test.ts, src/domain/features.test.ts, src/App.test.tsx, src/domain/rules.test.ts
+## Purpose
+Smart Campus Room Availability Checker: a client-side tool that checks whether a fictional
+room is free for a requested time slot. It never creates or confirms bookings.
 
-## Acceptance criteria (must be preserved)
-- AC1: reject start >= end and past requests.
-- AC2: reject durations longer than 120 minutes.
-- AC3: reject a blocked room.
-- AC4: reject overlaps; allow bookings touching only at endpoints.
-- AC5: do not mutate booking data.
-- AC6: retain clear desktop/mobile feedback.
+If your tool does not load this file automatically, paste it at the start of the prompt.
 
-## Constraints
-Preserve AC1-AC6; no backend, login or booking creation.
-Fictional room data only; no real rooms or real personal data.
-No secrets in source or committed files; no external deployments.
-No new features or dependencies. Keep the existing UI layout, wording and interactions.
+## Architecture
+- src/data/rooms.ts: fictional room catalog (4 rooms, each with its own bookings)
+- src/domain/: pure functions, no React
+  - time.ts: time helpers and limits (120 / 1440 min)
+  - availability.ts: booking-rule function
+  - rules.ts: individual booking rules
+  - filtering.ts: room filtering by capacity and equipment
+  - types.ts: shared types
+- src/components/: presentation only (RoomPicker, TimeField, ResultPanel, BookingsPanel, ErrorBoundary)
+- src/App.tsx: state and wiring
+- .github/workflows/ci.yml: CI (npm ci, test, typecheck, lint, build)
+- Tests (Vitest + jsdom + Testing Library): src/domain/availability.test.ts,
+  src/domain/features.test.ts, src/domain/rules.test.ts, src/domain/time.test.ts,
+  src/App.test.tsx, src/App.selection.test.tsx, src/components/ErrorBoundary.test.tsx
 
-## Engineering rules
-Prefer pure functions and minimal changes; use at most 2 justified patterns.
-Do not mutate booking fixtures; keep responsive UI feedback.
-Avoid Singleton, Factory or unnecessary class hierarchies.
-Do not touch anything outside the single refactoring that was approved.
+## Acceptance criteria (must stay true after every change)
+- AC1: time rules: reject start >= end, a start not after the current time, and values outside 00:00-24:00.
+- AC2: reject durations longer than 120 minutes (120 allowed, 121 rejected).
+- AC3: a blocked room is always unavailable; the message names the selected room.
+- AC4: reject real overlaps; allow bookings that touch only at endpoints.
+- AC5: capacity and equipment filters work; switching the room or any input clears the old
+  result; a room hidden by filters is not silently re-selected.
+
+## Setup
+npm ci
 
 ## Commands
-Test command: npm test (runs `vitest run`)
-Dev/preview: npm run dev
+Safe (allowed without asking):
+- npm test (runs `vitest run`), npm run typecheck, npm run lint, npm run build
+- npm run dev (local preview)
+- git status, git diff, git log
 
-## Verification
-Baseline: 4 test files, 37 tests passing.
-Run existing tests and add focused regression tests.
-Run npm test (plus npm run typecheck and npm run lint) and report results before proposing acceptance.
-Never weaken or delete existing assertions.
-Report changed files, rationale and test evidence.
+Need human approval first:
+- npm install <anything>, editing package.json or package-lock.json
+- editing .github/workflows/ or AGENTS.md
+- git commit, creating branches, deleting or renaming files
+
+## Forbidden actions
+- No secrets, tokens, .env files or real personal data; room data stays fictional.
+- No production deployment, no hosting config; the agent never pushes to a remote (the human pushes).
+- No destructive commands: rm -rf, git reset --hard, git clean -fd, git push --force.
+- No new or upgraded dependencies without review (do NOT run npm audit fix).
+- Never edit, weaken or delete an existing test or assertion to make it pass; fix the code instead.
+- No backend, login, database, external API, payments or booking creation.
+- No new features; keep the existing UI layout, wording and interactions.
+
+## Engineering rules
+- Prefer pure functions and minimal changes; domain code stays free of React and I/O.
+- Use at most 2 justified patterns; avoid Singleton, Factory and unnecessary class hierarchies.
+- Do not mutate booking fixtures or booking data.
+- Keep clear desktop and mobile feedback (responsive UI).
+- Repeated values live in one place (src/domain/time.ts); use durationMinutes instead of repeating end - start.
+- Evidence files are saved as UTF-8 (for example `| Out-File -Encoding utf8`).
+- Do not touch anything outside the task that was approved.
+
+## Test expectations
+- Every bug fix or new behaviour gets at least one focused test.
+- Before proposing acceptance run: npm test, npm run typecheck, npm run lint, npm run build.
+- Report exact pass/fail counts; never claim a result that was not executed.
+- Baseline (start of Assignment #05): 6 test files, 40 tests passing.
+- Current (after the Assignment #05 changes): 7 test files, 47 tests passing.
+- Report changed files, rationale and test evidence.
+
+## Review gates
+- The agent shows a plan first and waits for approval before editing.
+- The agent shows the exact diff; a human reviews it before it is kept.
+- Only the files named in the task may be changed.
+- CI must pass on the pull request or branch before a release decision.

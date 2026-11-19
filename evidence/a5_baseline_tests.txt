@@ -1,0 +1,20 @@
+﻿
+> vite-react-typescript-starter@0.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/User/OneDrive - aues.kz/Desktop/Chanel/SE/project/Software-Engineer-2026[39m
+
+ [32mтЬУ[39m src/domain/availability.test.ts [2m([22m[2m11 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32mтЬУ[39m src/domain/features.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32mтЬУ[39m src/domain/rules.test.ts [2m([22m[2m13 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32mтЬУ[39m src/components/ErrorBoundary.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 116[2mms[22m[39m
+ [32mтЬУ[39m src/App.selection.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 315[2mms[22m[39m
+   [33m[2mтЬУ[22m[39m R2: selection is not silently restored after filtering[2m > [22mdoes not re-select Auditorium B12 after it was filtered out and back in [33m313[2mms[22m[39m
+ [32mтЬУ[39m src/App.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 380[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m40 passed[39m[22m[90m (40)[39m
+[2m   Start at [22m 11:52:27
+[2m   Duration [22m 5.82s[2m (transform 473ms, setup 0ms, collect 2.59s, tests 852ms, environment 8.11s, prepare 1.82s)[22m
+
