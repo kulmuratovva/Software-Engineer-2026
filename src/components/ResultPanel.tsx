@@ -1,6 +1,5 @@
 import { AlertTriangle, CheckCircle2, Lightbulb, Loader2, XCircle } from 'lucide-react';
 import type { CheckOutcome } from '@/domain/types';
-import type { ExplanationResult } from '@/domain/explanation';
 import { formatDuration, toHHMM } from '@/domain/time';
 
 type Props = {
@@ -10,7 +9,7 @@ type Props = {
   startMin: number | null;
   endMin: number | null;
   duration: number | null;
-  explanation: ExplanationResult | null;
+  explanation: string | null;
   explanationLoading: boolean;
   onExplain: () => void;
 };
@@ -77,21 +76,16 @@ export default function ResultPanel({
               ) : (
                 <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
               )}
-              {explanationLoading ? 'Explaining…' : 'Explain this result'}
+              {explanationLoading ? 'Explaining…' : 'Explain availability'}
             </button>
 
-            {explanation && explanation.kind === 'ok' && (
+            {explanation !== null && (
               <div className="mt-3 rounded-lg bg-white/70 p-3 text-sm text-slate-700 leading-relaxed">
                 <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                  AI explanation · advisory only
+                  Generated explanation, not a booking confirmation
                 </p>
-                {explanation.text}
+                {explanation}
               </div>
-            )}
-            {explanation && explanation.kind === 'error' && (
-              <p className="mt-3 text-sm text-slate-500">
-                Explanation unavailable: {explanation.reason}
-              </p>
             )}
           </div>
         </div>

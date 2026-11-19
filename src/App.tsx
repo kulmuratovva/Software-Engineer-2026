@@ -6,7 +6,7 @@ import { checkAvailability } from '@/domain/availability';
 import { filterRooms } from '@/domain/filtering';
 import { DEFAULTS, MAX_DURATION, durationMinutes, formatDuration, toMinutes } from '@/domain/time';
 import { DURATION_LIMIT_NOTE, INPUT_ERRORS } from '@/domain/rules';
-import { mockExplanationAdapter, type ExplanationResult } from '@/domain/explanation';
+import { mockExplanationAdapter, runExplanation, reasonToCode } from '@/domain/explain';
 import TimeField from '@/components/TimeField';
 import RoomPicker from '@/components/RoomPicker';
 import ResultPanel from '@/components/ResultPanel';
@@ -22,7 +22,7 @@ export default function App() {
   const [outcome, setOutcome] = useState<CheckOutcome | null>(null);
   const [inputErrors, setInputErrors] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
-  const [explanation, setExplanation] = useState<ExplanationResult | null>(null);
+  const [explanation, setExplanation] = useState<string | null>(null);
   const [explanationLoading, setExplanationLoading] = useState(false);
 
   const visibleRooms = useMemo(
@@ -77,22 +77,22 @@ export default function App() {
     if (!room || !outcome || startMin === null || endMin === null) return;
     setExplanationLoading(true);
     setExplanation(null);
-    try {
-      const result = await mockExplanationAdapter.explain({
-        roomName: room.name,
-        start: startMin,
-        end: endMin,
-        duration,
-        outcome,
-        bookings: room.bookings,
-      });
-      setExplanation(result);
-    } catch {
-      setExplanation({ kind: 'error', reason: 'Unexpected error while generating the explanation.' });
-    } finally {
-      setExplanationLoading(false);
-    }
-  }, [room, outcome, startMin, endMin, duration]);
+    const isAvailable = outcome.kind === 'available';
+    const reasonCode = isAvailable
+      ? 'available'
+      : outcome.reasons.length > 0
+        ? reasonToCode(outcome.reasons[0])
+        : 'unknown';
+    const text = await runExplanation(mockExplanationAdapter, {
+      roomLabel: room.name,
+      startTime,
+      endTime,
+      isAvailable,
+      reasonCode,
+    });
+    setExplanation(text);
+    setExplanationLoading(false);
+  }, [room, outcome, startTime, endTime, startMin, endMin]);
 
   const handleReset = () => {
     setStartTime(DEFAULTS.start); setEndTime(DEFAULTS.end); setNowTime(DEFAULTS.now);
