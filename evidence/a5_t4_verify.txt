@@ -1,0 +1,141 @@
+﻿== R6: toHHMM in tests ==
+== R6: time.ts ==
+export const MAX_DURATION = 120;
+export const MINUTE_CAP = 1440;
+export const DEFAULTS = { start: '11:00', end: '12:00', now: '09:00' } as const;
+
+export function toMinutes(value: string, allowMidnightEnd = false): number | null {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+  if (!match) return null;
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  if (allowMidnightEnd && h === 24 && m === 0) return MINUTE_CAP;
+  if (h > 23 || m > 59) return null;
+  return h * 60 + m;
+}
+
+export function toHHMM(minutes: number): string {
+  if (minutes === MINUTE_CAP) return '24:00';
+  const h = Math.floor(minutes / 60) % 24;
+  return `${String(h).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+}
+
+/** Single source of truth for duration: null when end is not after start. */
+export function durationMinutes(start: number | null, end: number | null): number | null {
+  return start !== null && end !== null && end > start ? end - start : null;
+}
+
+export const formatDuration = (d: number | null) => (d === null ? 'вЂ”' : `${d} min`);
+== R7: invalid-input tests ==
+src/App.test.tsx:23:  it('F4: shows an empty state when no room matches', () => {
+== R7: handleCheck ==
+  const clearResult = () => { setSubmitted(false); setOutcome(null); setInputErrors([]); };
+  // F5: any input or room change clears a stale result.
+  useEffect(clearResult, [startTime, endTime, nowTime, selectedId, attendees, required]);
+  // R2: a room hidden by filters is deselected instead of being restored later.
+  useEffect(() => {
+    if (selectedId !== null && !visibleRooms.some((r) => r.id === selectedId)) {
+      setSelectedId(null);
+    }
+  }, [selectedId, visibleRooms]);
+
+  const handleCheck = () => {
+    if (!room) return;
+    const errors = [
+      startMin === null && INPUT_ERRORS.start,
+      endMin === null && INPUT_ERRORS.end,
+      nowMin === null && INPUT_ERRORS.now,
+    ].filter(Boolean) as string[];
+    setSubmitted(true);
+    setInputErrors(errors);
+    setOutcome(
+      errors.length > 0
+        ? null
+        : checkAvailability({
+            start: startMin as number, end: endMin as number, now: nowMin as number,
+            blocked: room.blocked, bookings: room.bookings, roomName: room.name,
+          })
+    );
+  };
+
+  const handleReset = () => {
+    setStartTime(DEFAULTS.start); setEndTime(DEFAULTS.end); setNowTime(DEFAULTS.now);
+    clearResult();
+  };
+
+  const toggle = (item: Equipment) =>
+    setRequired((cur) => (cur.includes(item) ? cur.filter((i) => i !== item) : [...cur, item]));
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 text-slate-800">
+      <header className="border-b border-slate-200/70 bg-white/80 backdrop-blur sticky top-0 z-10">
+== R8: fixture IDs ==
+src/domain/features.test.ts:11:  it('keeps a room whose capacity equals attendees', () => expect(ids(24)).toContain('101'));
+src/domain/features.test.ts:12:  it('drops a room with insufficient capacity (25 > 24)', () => expect(ids(25)).not.toContain('101'));
+src/domain/features.test.ts:17:    expect(ids(0, ['projector', 'microphone'])).toEqual(['B12']));
+src/domain/features.test.ts:19:    expect(ids(0, ['projector', 'whiteboard'])).toEqual(['204', 'B12']));
+src/domain/features.test.ts:40:  it('room 101 is busy at 12:10тАУ12:50', () => expect(run('101')).toBe('unavailable'));
+src/domain/features.test.ts:41:  it('room 305 is free for the same time', () => expect(run('305')).toBe('available'));
+== R9: TimeField ==
+export default function TimeField({ label, hint, value, onChange }: {
+  label: string; hint: string; value: string; onChange: (v: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="block text-xs font-medium text-slate-600">{label}</span>
+      <input
+        type="text" inputMode="numeric" pattern="[0-9:]*" placeholder="HH:MM" value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+      />
+      <span className="mt-1 block text-[11px] text-slate-400">{hint}</span>
+    </label>
+  );
+}
+== R10: disabled button ==
+src/App.tsx:116:              <button type="button" onClick={handleCheck} disabled={!room}
+== R11: engines/nvmrc/README ==
+False
+False
+README.md:23:Requires Node.js 18 or newer and npm.
+== R12: esbuild in lock ==
+package-lock.json:362:    "node_modules/@esbuild/aix-ppc64": {
+package-lock.json:364:      "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz",
+package-lock.json:378:    "node_modules/@esbuild/android-arm": {
+package-lock.json:380:      "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz",
+package-lock.json:394:    "node_modules/@esbuild/android-arm64": {
+package-lock.json:396:      "resolved": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz",
+package-lock.json:410:    "node_modules/@esbuild/android-x64": {
+package-lock.json:412:      "resolved": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz",
+== R13: ErrorBoundary ==
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+
+type State = { hasError: boolean };
+
+export default class ErrorBoundary extends Component<{ children: ReactNode }, State> {
+  state: State = { hasError: false };
+
+  static getDerivedStateFromError(): State {
+    return { hasError: true };
+  }
+
+  componentDidCatch(_: Error, info: ErrorInfo) {
+    console.error(info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <p role="alert">Something went wrong. Please reload the page.</p>;
+    }
+    return this.props.children;
+  }
+}
+== R14: test helper ==
+src/App.selection.test.tsx:10:const roomButton = (name: RegExp) => screen.getByRole('button', { name });
+src/App.test.tsx:7:const room = (name: RegExp) => screen.getByRole('button', { name });
+src/App.test.tsx:12:    fireEvent.click(screen.getByRole('button', { name: /check availability/i }));
+src/App.test.tsx:17:    fireEvent.click(screen.getByRole('button', { name: /check availability/i }));
+src/App.test.tsx:20:    fireEvent.click(screen.getByRole('button', { name: /check availability/i }));
+== R15: index.html http ==
+index.html:8:    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+index.html:10:    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
