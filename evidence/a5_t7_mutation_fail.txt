@@ -1,0 +1,70 @@
+﻿
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/User/OneDrive - aues.kz/Desktop/Chanel/SE/project/Software-Engineer-2026[39m
+
+ [31mтЭп[39m src/domain/time.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[90m 11[2mms[22m[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 0 minutes as 00:00[90m 6[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 9 minutes as 00:09[90m 0[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 600 minutes as 10:00[90m 0[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 719 minutes as 11:59[90m 0[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 1439 minutes as 23:59[90m 0[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22mrenders 1440 minutes as 24:00[90m 0[2mms[22m[31m[39m
+[31m     тЖТ MINUTE_CAP is not defined[39m
+[31m   [31m├Ч[31m toHHMM[2m > [22m1440 equals MINUTE_CAP[90m 2[2mms[22m[31m[39m
+[31m     тЖТ expected undefined to be 1440 // Object.is equality[39m
+
+node.exe : [31mтОптОптОптОптОптОптОп[1m[7m Failed Tests 7 [27m[22mтОптОптОптОптОптОптОп[39m
+строка:1 знак:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31mтОптОптОпт...птОптОптОп[39m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 0 minutes as 00:00
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 9 minutes as 00:09
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 600 minutes as 10:00
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 719 minutes as 11:59
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 1439 minutes as 23:59
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22mrenders 1440 minutes as 24:00
+[31m[1mReferenceError[22m: MINUTE_CAP is not defined[39m
+[36m [2mтЭп[22m Module.toHHMM src/domain/time.ts:[2m16:19[22m[39m
+    [90m 14| [39m
+    [90m 15| [39m[35mexport[39m [35mfunction[39m [34mtoHHMM[39m(minutes[33m:[39m number)[33m:[39m string {
+    [90m 16| [39m  [35mif[39m (minutes [33m===[39m [33mMINUTE_CAP[39m) [35mreturn[39m [32m'24:00'[39m[33m;[39m
+    [90m   | [39m                  [31m^[39m
+    [90m 17| [39m  [35mconst[39m h [33m=[39m [33mMath[39m[33m.[39m[34mfloor[39m(minutes [33m/[39m [34m60[39m) [33m%[39m [34m24[39m[33m;[39m
+    [90m 18| [39m  [35mreturn[39m [32m`[39m[36m${[39m[33mString[39m(h)[33m.[39m[34mpadStart[39m([34m2[39m[33m,[39m [32m'0'[39m)[36m}[39m[32m:[39m[36m${[39m[
+33mString[39m(minutes [33m%[39m [34m60[39m)[33m.[39m[34mpadStar[39mтАж
+[90m [2mтЭп[22m src/domain/time.test.ts:[2m13:12[22m[39m
+
+[31m[2mтОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОп[1/7]тОп[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/domain/time.test.ts[2m > [22mtoHHMM[2m > [22m1440 equals MINUTE_CAP
+[31m[1mAssertionError[22m: expected undefined to be 1440 // Object.is equality[39m
+
+[32m- Expected:[39m 
+1440
+
+[31m+ Received:[39m 
+undefined
+
+[36m [2mтЭп[22m src/domain/time.test.ts:[2m17:24[22m[39m
+    [90m 15| [39m
+    [90m 16| [39m  [34mit[39m([32m'1440 equals MINUTE_CAP'[39m[33m,[39m () [33m=>[39m {
+    [90m 17| [39m    [34mexpect[39m([33mMINUTE_CAP[39m)[33m.[39m[34mtoBe[39m([34m1440[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m 18| [39m  })[33m;[39m
+    [90m 19| [39m})[33m;[39m
+
+[31m[2mтОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОптОп[2/7]тОп[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[90m (7)[39m
+[2m   Start at [22m 15:04:01
+[2m   Duration [22m 1.57s[2m (transform 68ms, setup 0ms, collect 47ms, tests 11ms, environment 0ms, prepare 231ms)[22m
+
