@@ -4,6 +4,8 @@
 Smart Campus Room Availability Checker: a client-side tool that checks whether a fictional
 room is free for a requested time slot. It never creates or confirms bookings.
 
+If your tool does not load this file automatically, paste it at the start of the prompt.
+
 ## Architecture
 - src/data/rooms.ts: fictional room catalog (4 rooms, each with its own bookings)
 - src/domain/: pure functions, no React
@@ -14,12 +16,13 @@ room is free for a requested time slot. It never creates or confirms bookings.
   - types.ts: shared types
 - src/components/: presentation only (RoomPicker, TimeField, ResultPanel, BookingsPanel, ErrorBoundary)
 - src/App.tsx: state and wiring
+- .github/workflows/ci.yml: CI (npm ci, test, typecheck, lint, build)
 - Tests (Vitest + jsdom + Testing Library): src/domain/availability.test.ts,
-  src/domain/features.test.ts, src/domain/rules.test.ts, src/App.test.tsx,
-  src/App.selection.test.tsx, src/components/ErrorBoundary.test.tsx
+  src/domain/features.test.ts, src/domain/rules.test.ts, src/domain/time.test.ts,
+  src/App.test.tsx, src/App.selection.test.tsx, src/components/ErrorBoundary.test.tsx
 
 ## Acceptance criteria (must stay true after every change)
-- AC1: time rules: reject start >= end, a start in the past, and values outside 00:00-24:00.
+- AC1: time rules: reject start >= end, a start not after the current time, and values outside 00:00-24:00.
 - AC2: reject durations longer than 120 minutes (120 allowed, 121 rejected).
 - AC3: a blocked room is always unavailable; the message names the selected room.
 - AC4: reject real overlaps; allow bookings that touch only at endpoints.
@@ -37,11 +40,12 @@ Safe (allowed without asking):
 
 Need human approval first:
 - npm install <anything>, editing package.json or package-lock.json
+- editing .github/workflows/ or AGENTS.md
 - git commit, creating branches, deleting or renaming files
 
 ## Forbidden actions
 - No secrets, tokens, .env files or real personal data; room data stays fictional.
-- No production deployment, no hosting config, no push to a remote.
+- No production deployment, no hosting config; the agent never pushes to a remote (the human pushes).
 - No destructive commands: rm -rf, git reset --hard, git clean -fd, git push --force.
 - No new or upgraded dependencies without review (do NOT run npm audit fix).
 - Never edit, weaken or delete an existing test or assertion to make it pass; fix the code instead.
@@ -53,17 +57,20 @@ Need human approval first:
 - Use at most 2 justified patterns; avoid Singleton, Factory and unnecessary class hierarchies.
 - Do not mutate booking fixtures or booking data.
 - Keep clear desktop and mobile feedback (responsive UI).
-- Repeated values live in one place (src/domain/time.ts).
+- Repeated values live in one place (src/domain/time.ts); use durationMinutes instead of repeating end - start.
+- Evidence files are saved as UTF-8 (for example `| Out-File -Encoding utf8`).
 - Do not touch anything outside the task that was approved.
 
 ## Test expectations
 - Every bug fix or new behaviour gets at least one focused test.
 - Before proposing acceptance run: npm test, npm run typecheck, npm run lint, npm run build.
 - Report exact pass/fail counts; never claim a result that was not executed.
-- Baseline: 6 test files, 40 tests passing.
+- Baseline (start of Assignment #05): 6 test files, 40 tests passing.
+- Current (after the Assignment #05 changes): 7 test files, 47 tests passing.
 - Report changed files, rationale and test evidence.
 
 ## Review gates
 - The agent shows a plan first and waits for approval before editing.
 - The agent shows the exact diff; a human reviews it before it is kept.
 - Only the files named in the task may be changed.
+- CI must pass on the pull request or branch before a release decision.
