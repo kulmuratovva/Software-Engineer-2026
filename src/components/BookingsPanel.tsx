@@ -1,6 +1,6 @@
 import { CalendarClock } from 'lucide-react';
 import type { Booking } from '@/domain/types';
-import { MINUTE_CAP, toHHMM } from '@/domain/time';
+import { durationMinutes, MINUTE_CAP, toHHMM } from '@/domain/time';
 import { RECAP_RULES } from '@/domain/rules';
 
 export default function BookingsPanel({ bookings }: { bookings: Booking[] }) {
@@ -17,13 +17,13 @@ export default function BookingsPanel({ bookings }: { bookings: Booking[] }) {
           <li key={b.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-slate-800">{b.label}</p>
-              <span className="text-xs text-slate-500">{b.end - b.start} min</span>
+              <span className="text-xs text-slate-500">{durationMinutes(b.start, b.end) ?? 0} min</span>
             </div>
             <p className="mt-1 text-sm text-slate-600">{toHHMM(b.start)} – {toHHMM(b.end)}</p>
             <div className="mt-3 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
               <div className="h-full bg-sky-500" style={{
                 marginLeft: `${(b.start / MINUTE_CAP) * 100}%`,
-                width: `${((b.end - b.start) / MINUTE_CAP) * 100}%`,
+                width: `${((durationMinutes(b.start, b.end) ?? 0) / MINUTE_CAP) * 100}%`,
               }} />
             </div>
           </li>

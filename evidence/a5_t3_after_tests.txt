@@ -1,0 +1,20 @@
+﻿
+> vite-react-typescript-starter@0.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/User/OneDrive - aues.kz/Desktop/Chanel/SE/project/Software-Engineer-2026[39m
+
+ [32mтЬУ[39m src/domain/time.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32mтЬУ[39m src/domain/availability.test.ts [2m([22m[2m11 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32mтЬУ[39m src/domain/features.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32mтЬУ[39m src/domain/rules.test.ts [2m([22m[2m13 tests[22m[2m)[22m[90m 11[2mms[22m[39m
+ [32mтЬУ[39m src/components/ErrorBoundary.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 77[2mms[22m[39m
+ [32mтЬУ[39m src/App.selection.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 185[2mms[22m[39m
+ [32mтЬУ[39m src/App.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[90m 217[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+[2m      Tests [22m [1m[32m47 passed[39m[22m[90m (47)[39m
+[2m   Start at [22m 14:51:41
+[2m   Duration [22m 3.22s[2m (transform 320ms, setup 0ms, collect 1.85s, tests 516ms, environment 5.53s, prepare 1.77s)[22m
+
