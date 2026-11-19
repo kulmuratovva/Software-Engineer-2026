@@ -34,6 +34,20 @@ export const KNOWN_REASON_CODES = [
 ] as const;
 export type ReasonCode = (typeof KNOWN_REASON_CODES)[number];
 
+/** Fixed priority when the checker returns several reasons (finding F1). */
+const REASON_PRIORITY = ['blocked', 'timeRange', 'endAfterStart', 'startAfterNow', 'duration', 'overlap'];
+export function primaryReasonCode(reasons: string[]): string {
+  const codes = reasons.map(reasonToCode);
+  return REASON_PRIORITY.find((c) => codes.includes(c)) ?? 'unknown';
+}
+
+const UNAVAILABLE_WORDS = /not available|unavailable|blocked|overlaps?|exceeds?|must be|outside/;
+/** Defence in depth (finding F2): the text must mention the right status. */
+function mentionsStatus(text: string, isAvailable: boolean): boolean {
+  const lower = text.toLowerCase();
+  return isAvailable ? /\bavailable\b/.test(lower) : UNAVAILABLE_WORDS.test(lower);
+}
+
 /**
  * Instruction text for a real model. The mock adapter does not use this.
  * It is a documented constant so a future server-side adapter can send it
@@ -154,7 +168,9 @@ export async function runExplanation(
     const output = await withTimeout(adapter.explain(input), TIMEOUT_MS);
     const outputError = validateOutput(output, input.isAvailable);
     if (outputError) return fallbackFor(input.reasonCode);
-    return (output as ExplanationOutput).explanation.trim();
+        const text = (output as ExplanationOutput).explanation.trim();
+        if (!mentionsStatus(text, input.isAvailable)) return fallbackFor(input.reasonCode);
+        return text;
   } catch {
     return fallbackFor(input.reasonCode);
   }

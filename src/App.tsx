@@ -6,7 +6,7 @@ import { checkAvailability } from '@/domain/availability';
 import { filterRooms } from '@/domain/filtering';
 import { DEFAULTS, MAX_DURATION, durationMinutes, formatDuration, toMinutes } from '@/domain/time';
 import { DURATION_LIMIT_NOTE, INPUT_ERRORS } from '@/domain/rules';
-import { mockExplanationAdapter, runExplanation, reasonToCode } from '@/domain/explain';
+import { mockExplanationAdapter, runExplanation, primaryReasonCode } from '@/domain/explain';
 import TimeField from '@/components/TimeField';
 import RoomPicker from '@/components/RoomPicker';
 import ResultPanel from '@/components/ResultPanel';
@@ -78,11 +78,7 @@ export default function App() {
     setExplanationLoading(true);
     setExplanation(null);
     const isAvailable = outcome.kind === 'available';
-    const reasonCode = isAvailable
-      ? 'available'
-      : outcome.reasons.length > 0
-        ? reasonToCode(outcome.reasons[0])
-        : 'unknown';
+    const reasonCode = isAvailable ? 'available' : primaryReasonCode(outcome.reasons);
     const text = await runExplanation(mockExplanationAdapter, {
       roomLabel: room.name,
       startTime,

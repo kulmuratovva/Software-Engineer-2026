@@ -74,7 +74,7 @@ describe('Explanation domain extra', () => {
       explain: async () => ({ explanation: injection }),
     };
     const text3 = await runExplanation(injector2, validInput({ isAvailable: false, reasonCode: 'blocked' }));
-    expect(text3).toBe(injection);
+    expect(text3).toBe(fallbackFor('blocked')); // closed by patch 2 (F2) 
   });
 });
 
