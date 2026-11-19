@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Clock, DoorClosed, Sparkles } from 'lucide-react';
 import { ROOMS } from '@/data/rooms';
 import type { CheckOutcome, Equipment } from '@/domain/types';
@@ -6,6 +6,7 @@ import { checkAvailability } from '@/domain/availability';
 import { filterRooms } from '@/domain/filtering';
 import { DEFAULTS, MAX_DURATION, durationMinutes, formatDuration, toMinutes } from '@/domain/time';
 import { DURATION_LIMIT_NOTE, INPUT_ERRORS } from '@/domain/rules';
+import { mockExplanationAdapter, runExplanation, reasonToCode } from '@/domain/explain';
 import TimeField from '@/components/TimeField';
 import RoomPicker from '@/components/RoomPicker';
 import ResultPanel from '@/components/ResultPanel';
@@ -21,6 +22,8 @@ export default function App() {
   const [outcome, setOutcome] = useState<CheckOutcome | null>(null);
   const [inputErrors, setInputErrors] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanationLoading, setExplanationLoading] = useState(false);
 
   const visibleRooms = useMemo(
     () => filterRooms(ROOMS, { attendees: Math.max(0, Number(attendees) || 0), required }),
@@ -33,7 +36,13 @@ export default function App() {
   const nowMin = toMinutes(nowTime);
   const duration = durationMinutes(startMin, endMin);
 
-  const clearResult = () => { setSubmitted(false); setOutcome(null); setInputErrors([]); };
+  const clearResult = () => {
+    setSubmitted(false);
+    setOutcome(null);
+    setInputErrors([]);
+    setExplanation(null);
+    setExplanationLoading(false);
+  };
   // F5: any input or room change clears a stale result.
   useEffect(clearResult, [startTime, endTime, nowTime, selectedId, attendees, required]);
   // R2: a room hidden by filters is deselected instead of being restored later.
@@ -52,6 +61,8 @@ export default function App() {
     ].filter(Boolean) as string[];
     setSubmitted(true);
     setInputErrors(errors);
+    setExplanation(null);
+    setExplanationLoading(false);
     setOutcome(
       errors.length > 0
         ? null
@@ -61,6 +72,27 @@ export default function App() {
           })
     );
   };
+
+  const handleExplain = useCallback(async () => {
+    if (!room || !outcome || startMin === null || endMin === null) return;
+    setExplanationLoading(true);
+    setExplanation(null);
+    const isAvailable = outcome.kind === 'available';
+    const reasonCode = isAvailable
+      ? 'available'
+      : outcome.reasons.length > 0
+        ? reasonToCode(outcome.reasons[0])
+        : 'unknown';
+    const text = await runExplanation(mockExplanationAdapter, {
+      roomLabel: room.name,
+      startTime,
+      endTime,
+      isAvailable,
+      reasonCode,
+    });
+    setExplanation(text);
+    setExplanationLoading(false);
+  }, [room, outcome, startTime, endTime, startMin, endMin]);
 
   const handleReset = () => {
     setStartTime(DEFAULTS.start); setEndTime(DEFAULTS.end); setNowTime(DEFAULTS.now);
@@ -124,7 +156,8 @@ export default function App() {
             </div>
             {!room && <p className="mt-4 text-sm text-slate-500">Select a room above to check its availability.</p>}
             <ResultPanel submitted={submitted} inputErrors={inputErrors} outcome={outcome}
-              startMin={startMin} endMin={endMin} duration={duration} />
+              startMin={startMin} endMin={endMin} duration={duration}
+              explanation={explanation} explanationLoading={explanationLoading} onExplain={handleExplain} />
           </section>
           <BookingsPanel bookings={room?.bookings ?? []} />
         </div>

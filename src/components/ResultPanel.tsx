@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Lightbulb, Loader2, XCircle } from 'lucide-react';
 import type { CheckOutcome } from '@/domain/types';
 import { formatDuration, toHHMM } from '@/domain/time';
 
@@ -9,9 +9,22 @@ type Props = {
   startMin: number | null;
   endMin: number | null;
   duration: number | null;
+  explanation: string | null;
+  explanationLoading: boolean;
+  onExplain: () => void;
 };
 
-export default function ResultPanel({ submitted, inputErrors, outcome, startMin, endMin, duration }: Props) {
+export default function ResultPanel({
+  submitted,
+  inputErrors,
+  outcome,
+  startMin,
+  endMin,
+  duration,
+  explanation,
+  explanationLoading,
+  onExplain,
+}: Props) {
   if (!submitted) return null;
   if (inputErrors.length > 0) {
     return (
@@ -32,7 +45,7 @@ export default function ResultPanel({ submitted, inputErrors, outcome, startMin,
     <div className={`mt-5 rounded-xl border p-5 ${ok ? 'border-emerald-200 bg-emerald-50' : 'border-rose-200 bg-rose-50'}`}>
       <div className="flex items-start gap-3">
         <Icon className={`h-6 w-6 shrink-0 ${ok ? 'text-emerald-600' : 'text-rose-600'}`} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className={`text-base font-semibold ${ok ? 'text-emerald-800' : 'text-rose-800'}`}>
             {ok ? 'Available' : 'Unavailable'}
           </p>
@@ -50,6 +63,31 @@ export default function ResultPanel({ submitted, inputErrors, outcome, startMin,
           ) : (
             <p className="mt-2 text-sm text-emerald-800">No rule violations and no overlap with existing bookings.</p>
           )}
+
+          <div className="mt-4 border-t border-slate-200/70 pt-3">
+            <button
+              type="button"
+              onClick={onExplain}
+              disabled={explanationLoading}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+            >
+              {explanationLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
+              ) : (
+                <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+              )}
+              {explanationLoading ? 'Explaining…' : 'Explain availability'}
+            </button>
+
+            {explanation !== null && (
+              <div className="mt-3 rounded-lg bg-white/70 p-3 text-sm text-slate-700 leading-relaxed">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                  Generated explanation, not a booking confirmation
+                </p>
+                {explanation}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
